@@ -1,47 +1,32 @@
 #include "main.h"
 
 /**
- * _printf - produces output according to a format
- * @format: format string containing the characters and the specifiers
- * Description: this function will call the get_print() function that will
- * determine which printing function to call depending on the conversion
- * specifiers contained into fmt
- * Return: length of the formatted output string
+ * get_flag - turns on flags if _printf finds
+ * a flag modifier in the format string
+ * @s: character that holds the flag specifier
+ * @f: pointer to the struct flags in which we turn the flags on
+ *
+ * Return: 1 if a flag has been turned on, 0 otherwise
  */
-int _printf(const char *format, ...)
+int get_flag(char s, flags_t *f)
 {
-	int (*pfunc)(va_list, flags_t *);
-	const char *p;
-	va_list arguments;
-	flags_t flags = {0, 0, 0};
+	int i = 0;
 
-	register int count = 0;
-
-	va_start(arguments, format);
-	if (!format || (format[0] == '%' && !format[1]))
-		return (-1);
-	if (format[0] == '%' && format[1] == ' ' && !format[2])
-		return (-1);
-	for (p = format; *p; p++)
+	switch (s)
 	{
-		if (*p == '%')
-		{
-			p++;
-			if (*p == '%')
-			{
-				count += _putchar('%');
-				continue;
-			}
-			while (get_flag(*p, &flags))
-				p++;
-			pfunc = get_print(*p);
-			count += (pfunc)
-				? pfunc(arguments, &flags)
-				: _printf("%%%c", *p);
-		} else
-			count += _putchar(*p);
+		case '+':
+			f->plus = 1;
+			i = 1;
+			break;
+		case ' ':
+			f->space = 1;
+			i = 1;
+			break;
+		case '#':
+			f->hash = 1;
+			i = 1;
+			break;
 	}
-	_putchar(-1);
-	va_end(arguments);
-	return (count);
+
+	return (i);
 }
